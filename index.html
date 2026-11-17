@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffe5ec">
+<title>Roda Takdir 💕</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fff7ee; --peach:#ffd9c2; --coral:#ff8a8a; --pink:#ffb3c6; --lav:#d9c7ff;
+    --plum:#5b3a5e; --ink:#6b4a6e; --soft:0 10px 30px rgba(190,120,150,.22);
+    --wheel:340px; --hub:72px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100%;}
+  body{
+    font-family:'Poppins','Quicksand',system-ui,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,#fff7ee 0%,#ffe5ec 45%,#eadcff 100%);
+    background-attachment:fixed;
+    min-height:100vh;min-height:100dvh;
+    overflow-x:hidden;
+  }
+
+  /* ===== Background mengambang ===== */
+  .bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .bg span{
+    position:absolute;bottom:-60px;opacity:0;
+    animation:floatUp linear infinite;
+    filter:drop-shadow(0 2px 4px rgba(255,138,138,.25));
+  }
+  @keyframes floatUp{
+    0%{transform:translate3d(0,0,0) rotate(0deg) scale(.8);opacity:0}
+    10%{opacity:.75}
+    50%{transform:translate3d(24px,-55vh,0) rotate(160deg) scale(1)}
+    90%{opacity:.6}
+    100%{transform:translate3d(-20px,-115vh,0) rotate(340deg) scale(.9);opacity:0}
+  }
+
+  /* ===== Layout ===== */
+  .app{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:18px 12px;}
+  .screen{display:none;width:100%;max-width:480px;flex-direction:column;align-items:center;text-align:center}
+  .screen.active{display:flex;animation:screenIn .7s cubic-bezier(.2,.8,.2,1) both}
+  .screen.out{display:flex;animation:screenOut .4s ease forwards}
+  @keyframes screenIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+  @keyframes screenOut{to{opacity:0;transform:translateY(-16px) scale(.96)}}
+
+  /* ===== Intro ===== */
+  .card{
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:2px solid rgba(255,255,255,.9);
+    border-radius:32px;padding:30px 24px 26px;box-shadow:var(--soft);width:100%;
+  }
+  .intro-emoji{font-size:64px;line-height:1;display:inline-block;animation:bob 3s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
+  .card h1{font-family:'Quicksand','Poppins',sans-serif;font-size:26px;color:var(--plum);margin:14px 0 10px;font-weight:700}
+  .card p{font-size:16px;line-height:1.7;margin:0 0 22px;color:var(--ink)}
+  .btn{
+    font-family:inherit;font-weight:600;font-size:16px;border:none;cursor:pointer;
+    padding:15px 26px;border-radius:999px;color:#fff;
+    background:linear-gradient(135deg,#ff9a9a,#ff7a9c);
+    box-shadow:0 8px 20px rgba(255,122,156,.4);
+    transition:transform .15s ease,box-shadow .15s ease;width:100%;
+  }
+  .btn:active{transform:scale(.96);box-shadow:0 4px 10px rgba(255,122,156,.4)}
+  .btn.alt{background:linear-gradient(135deg,#c9b2ff,#a98bff);box-shadow:0 8px 20px rgba(169,139,255,.4)}
+  .btn.shine{position:relative;overflow:hidden}
+  .btn.shine::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
+    transform:skewX(-20deg);animation:shine 3s ease-in-out infinite}
+  @keyframes shine{0%,60%{left:-60%}100%{left:130%}}
+
+  /* ===== Main ===== */
+  .title{font-family:'Quicksand','Poppins',sans-serif;font-size:26px;font-weight:700;color:var(--plum);margin:0}
+  .sub{font-size:13.5px;margin:6px 0 20px;color:var(--ink);opacity:.85}
+  .wheel-wrap{position:relative;width:var(--wheel);height:var(--wheel);margin:6px auto 0}
+  #wheel{display:block;width:100%;height:100%;touch-action:none;cursor:grab;border-radius:50%;
+    filter:drop-shadow(0 14px 22px rgba(190,120,150,.32))}
+  #wheel:active{cursor:grabbing}
+  .pointer{position:absolute;left:50%;top:-20px;width:0;height:0;z-index:3;transform-origin:50% 30%;margin-left:-15px}
+  .pointer i{position:absolute;left:0;top:0;width:30px;height:30px;background:linear-gradient(135deg,#ff7a9c,#ff9a9a);
+    border:3px solid #fff;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 10px rgba(255,100,130,.5)}
+  .pointer i::after{content:"";position:absolute;left:7px;top:7px;width:9px;height:9px;background:#fff;border-radius:50%}
+  .pointer.flick{animation:flick .12s ease}
+  @keyframes flick{0%{transform:rotate(0)}40%{transform:rotate(-16deg)}100%{transform:rotate(0)}}
+  .hub{
+    position:absolute;left:50%;top:50%;width:var(--hub);height:var(--hub);margin:calc(var(--hub) / -2) 0 0 calc(var(--hub) / -2);
+    border-radius:50%;border:4px solid #fff;z-index:4;cursor:pointer;
+    font-family:'Poppins',sans-serif;font-weight:700;font-size:calc(var(--hub) * .21);letter-spacing:.3px;color:#fff;
+    background:radial-gradient(circle at 35% 30%,#ffb0b8,#ff6f95);
+    box-shadow:0 6px 16px rgba(255,100,130,.5);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  .hub:active{transform:scale(.92)}
+  .hub:disabled{animation:none;filter:saturate(.7);cursor:default}
+  @keyframes pulse{
+    0%,100%{transform:scale(1);box-shadow:0 6px 16px rgba(255,100,130,.5),0 0 0 0 rgba(255,122,156,.55)}
+    50%{transform:scale(1.08);box-shadow:0 6px 16px rgba(255,100,130,.5),0 0 0 14px rgba(255,122,156,0)}
+  }
+  .hint{margin-top:22px;font-size:13px;opacity:.8}
+  .counter{margin-top:6px;font-size:12px;opacity:.6;min-height:18px}
+
+  .mute{
+    position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:20;
+    width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.8);
+    box-shadow:var(--soft);font-size:20px;cursor:pointer;display:none;align-items:center;justify-content:center;
+  }
+  .mute.show{display:flex}
+  .mute:active{transform:scale(.9)}
+
+  /* ===== Modal ===== */
+  .overlay{
+    position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:18px;
+    background:rgba(91,58,94,.35);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  }
+  .overlay.open{display:flex;animation:fade .3s ease both}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{
+    width:100%;max-width:400px;background:linear-gradient(180deg,#fff,#fff4f0);border-radius:32px;padding:28px 22px 22px;
+    text-align:center;box-shadow:0 20px 50px rgba(120,60,100,.35);border:3px solid #fff;
+    animation:pop .55s cubic-bezier(.2,1.3,.4,1) both;position:relative;
+  }
+  @keyframes pop{from{opacity:0;transform:scale(.6) translateY(30px)}to{opacity:1;transform:none}}
+  .modal .eyebrow{font-size:13px;font-weight:600;color:var(--coral);letter-spacing:.4px;text-transform:uppercase}
+  .modal .result{font-family:'Quicksand','Poppins',sans-serif;font-size:28px;line-height:1.25;font-weight:700;color:var(--plum);margin:10px 0 12px}
+  .modal .msg{font-size:15px;line-height:1.65;margin:0 0 20px;background:#fff0f4;border-radius:18px;padding:14px 16px}
+  .modal .btn+.btn{margin-top:12px}
+  .modal .tiny{font-size:12px;margin:8px 0 0;opacity:.8}
+  .modal .wa{background:linear-gradient(135deg,#4fd68a,#2fb871);box-shadow:0 8px 20px rgba(47,184,113,.35);margin-top:18px}
+
+  #confetti{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none}
+
+  @media (prefers-reduced-motion:reduce){
+    .bg span,.intro-emoji,.hub,.btn.shine::after{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg" id="bg" aria-hidden="true"></div>
+
+<button class="mute" id="muteBtn" aria-label="Matikan atau nyalakan suara" title="Suara">🔊</button>
+
+<main class="app">
+
+  <!-- ===== LAYAR PEMBUKA ===== -->
+  <section class="screen active" id="introScreen">
+    <div class="card">
+      <div class="intro-emoji">🔮</div>
+      <h1 id="introTitle">Hai! 💕</h1>
+      <p>Masih bingung dan overthinking buat kasih jawaban? 🤭 Santai aja, nggak usah dipaksa mikir keras. Serahin aja ke semesta, coba putar roda takdir ini!</p>
+      <button class="btn shine" id="startBtn">Mulai Putar Takdir ✨</button>
+    </div>
+  </section>
+
+  <!-- ===== LAYAR UTAMA ===== -->
+  <section class="screen" id="mainScreen">
+    <h2 class="title">Roda Takdir ✨</h2>
+    <p class="sub">Tekan <b>PUTAR!</b> atau geser rodanya pakai jari 👆</p>
+    <div class="wheel-wrap" id="wheelWrap">
+      <div class="pointer" id="pointer"><i></i></div>
+      <canvas id="wheel" aria-label="Roda takdir dengan 12 pilihan jawaban"></canvas>
+      <button class="hub" id="spinBtn">PUTAR!</button>
+    </div>
+    <div class="hint">Semesta lagi dengerin kamu 🌙</div>
+    <div class="counter" id="counter"></div>
+  </section>
+
+</main>
+
+<!-- ===== POP-UP HASIL ===== -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="resultText">
+  <div class="modal">
+    <div class="eyebrow">Takdir bilang… 🔮</div>
+    <div class="result" id="resultText"></div>
+    <p class="msg" id="resultMsg"></p>
+    <button class="btn alt" id="againBtn">Putar Lagi 🔄</button>
+    <p class="tiny">Boleh coba lagi kalau belum sreg, tapi hasilnya tetap aja kamu harus nerima aku 😉</p>
+    <button class="btn wa" id="waBtn">Kirim Hasil ke WhatsApp 💌</button>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+/* =========================================================
+   ⚙️  PENGATURAN — GANTI DI SINI SAJA
+   ---------------------------------------------------------
+   WA_NUMBER      : nomor WhatsApp tujuan, format internasional
+                    tanpa +, spasi, atau tanda hubung.
+                    Contoh: 6281234567890  (bukan 081234567890)
+   NAMA_CEWEK     : nama panggilan si cewek, tampil di layar pembuka.
+                    Kosongkan ('') kalau tidak mau ada nama.
+   NAMA_COWOK     : nama panggilan kamu (penerima pesan), dipakai
+                    di sapaan pesan WhatsApp. Kosongkan kalau tidak perlu.
+   ========================================================= */
+const CONFIG = {
+  WA_NUMBER: '6283866149421',
+  NAMA_CEWEK: '',
+  NAMA_COWOK: ''
+};
+
+/* ---------- Data segmen & pesan manis ---------- */
+const SEGMENTS = [
+  { label: 'Terima sekarang ❤️',            msg: 'Hatimu udah tau jawabannya dari tadi kok. Yuk bilang sekarang, dia pasti deg-degan nungguin kamu 💗' },
+  { label: 'Terima sambil traktir kopi ☕',  msg: 'Terima, tapi dengan satu syarat manis: kopi favoritmu dibayarin dia. Deal ya? ☕' },
+  { label: 'Kasih kesempatan dulu ✨',       msg: 'Nggak harus buru-buru. Kasih dia kesempatan buktiin kalau dia memang yang terbaik buat kamu ✨' },
+  { label: 'Jalan bareng minggu ini 🛵',     msg: 'Minggu ini ajak dia jalan bareng. Siapa tahu makin yakin pas boncengan sambil ketawa-ketawa 🛵' },
+  { label: 'Terima besok pagi ☀️',           msg: 'Tidur nyenyak dulu malam ini, besok pagi bangun dengan senyum dan langsung jawab "iya" ☀️' },
+  { label: 'Chat “Iya” sekarang 💬',         msg: 'Buka chat-nya, ketik satu kata ajaib itu, lalu tekan kirim. Gampang banget kan? 💬' },
+  { label: 'Terima + minta jajan 🍦',        msg: 'Boleh terima, asal sekalian minta jajan es krim favoritmu. Pacar baru, hak baru 🍦' },
+  { label: 'Nonton bareng dulu 🎬',          msg: 'Ajak nonton dulu, pilih film yang kamu suka. Kalau dia sabar nemenin, itu tandanya serius 🎬' },
+  { label: 'Langsung bilang Iya! 🎉',        msg: 'Semesta udah kompak: jawabannya IYA! Nggak usah ditunda-tunda lagi 🎉' },
+  { label: 'Dinner bareng dulu 🍜',          msg: 'Makan malam berdua dulu, sambil ngobrol dari hati ke hati. Jawabannya bakal keluar sendiri 🍜' },
+  { label: 'Terima sambil senyum 😊',        msg: 'Jawab sambil senyum manis kamu itu. Dijamin dia nggak bakal bisa tidur semalaman 😊' },
+  { label: 'Sah hari ini! 💍',               msg: 'Wah, semesta lagi semangat banget! Pelan-pelan aja ya, tapi hari ini resmi jadian dulu cukup 💍' }
+];
+
+/* ---------- Util ---------- */
+const $ = id => document.getElementById(id);
+const TAU = Math.PI * 2;
+const N = SEGMENTS.length;
+const SEG = TAU / N;
+const COLORS = ['#ffc2cf','#ffd9c2','#e3d4ff','#fff0d9','#ffb3c6','#ffe3cf','#d9c7ff','#ffe9f0','#ffcdb5','#efe3ff','#ffd1dc','#fff3e0'];
+
+/* ---------- Background mengambang ---------- */
+(function makeBg(){
+  const bg = $('bg');
+  const icons = ['♥','♡','★','✦','✧','✨','💗','⭐','💫'];
+  const cols = ['#ff8a8a','#ffb3c6','#c9b2ff','#ffc58a','#ff9ec0'];
+  for (let i = 0; i < 26; i++){
+    const s = document.createElement('span');
+    s.textContent = icons[i % icons.length];
+    s.style.left = (Math.random() * 100) + '%';
+    s.style.fontSize = (12 + Math.random() * 20) + 'px';
+    s.style.color = cols[Math.floor(Math.random() * cols.length)];
+    s.style.animationDuration = (12 + Math.random() * 14) + 's';
+    s.style.animationDelay = (-Math.random() * 20) + 's';
+    bg.appendChild(s);
+  }
+})();
+
+/* ---------- Audio (Web Audio API, tanpa file eksternal) ---------- */
+let ac = null, muted = false, lastTickAt = 0;
+try { muted = localStorage.getItem('wheel_muted') === '1'; } catch(e){}
+function ensureAudio(){
+  if (!ac){ try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} }
+  if (ac && ac.state === 'suspended') ac.resume();
+}
+function playTick(){
+  if (muted || !ac) return;
+  const now = performance.now();
+  if (now - lastTickAt < 28) return;
+  lastTickAt = now;
+  const t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
+  o.type = 'triangle';
+  o.frequency.setValueAtTime(1500, t);
+  o.frequency.exponentialRampToValueAtTime(700, t + 0.045);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.2, t + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.055);
+  o.connect(g); g.connect(ac.destination);
+  o.start(t); o.stop(t + 0.07);
+}
+function playChime(){
+  if (muted || !ac) return;
+  const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+  notes.forEach((f, i) => {
+    const t = ac.currentTime + i * 0.11;
+    [[f,'sine',0.22],[f*2,'triangle',0.06]].forEach(([fr,type,vol]) => {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.value = fr;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 1.1);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t); o.stop(t + 1.15);
+    });
+  });
+}
+const muteBtn = $('muteBtn');
+function renderMute(){ muteBtn.textContent = muted ? '🔇' : '🔊'; }
+muteBtn.addEventListener('click', () => {
+  ensureAudio();
+  muted = !muted;
+  try { localStorage.setItem('wheel_muted', muted ? '1' : '0'); } catch(e){}
+  renderMute();
+  if (!muted) playTick();
+});
+renderMute();
+
+/* ---------- Ukuran & gambar roda ---------- */
+const canvas = $('wheel'), ctx = canvas.getContext('2d');
+const wrap = $('wheelWrap');
+let size = 340, dpr = 1;
+let angle = 0;          // rotasi roda (radian)
+let omega = 0;          // kecepatan sudut (rad/detik)
+let spinning = false, dragging = false;
+let spinCount = 0;
+
+function resize(){
+  dpr = Math.min(window.devicePixelRatio || 1, 3);
+  size = Math.floor(Math.max(240, Math.min(window.innerWidth - 24, window.innerHeight * 0.6, 460)));
+  wrap.style.setProperty('--wheel', size + 'px');
+  wrap.style.setProperty('--hub', Math.round(size * 0.21) + 'px');
+  canvas.width = Math.round(size * dpr);
+  canvas.height = Math.round(size * dpr);
+  draw();
+}
+
+function wrapLines(text, maxW){
+  const words = text.split(' ');
+  const lines = [];
+  let cur = '';
+  for (const w of words){
+    const test = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(test).width > maxW && cur){ lines.push(cur); cur = w; }
+    else cur = test;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function draw(){
+  const R = size / 2;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, size, size);
+  ctx.save();
+  ctx.translate(R, R);
+
+  // Cincin luar
+  const g = ctx.createLinearGradient(-R, -R, R, R);
+  g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#ffe3ec');
+  ctx.beginPath(); ctx.arc(0, 0, R * 0.99, 0, TAU); ctx.fillStyle = g; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,138,138,.35)'; ctx.stroke();
+
+  // Lampu-lampu kecil di cincin
+  for (let i = 0; i < 24; i++){
+    const a = i * TAU / 24;
+    ctx.beginPath();
+    ctx.arc(Math.cos(a) * R * 0.935, Math.sin(a) * R * 0.935, R * 0.016, 0, TAU);
+    ctx.fillStyle = i % 2 ? '#ff9ab5' : '#ffc58a';
+    ctx.fill();
+  }
+
+  // Segmen
+  const W = R * 0.87;
+  ctx.save();
+  ctx.rotate(angle);
+  for (let i = 0; i < N; i++){
+    const a0 = i * SEG, a1 = a0 + SEG;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, W, a0, a1); ctx.closePath();
+    ctx.fillStyle = COLORS[i % COLORS.length]; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
+  }
+  // Teks
+  ctx.fillStyle = '#5b3a5e';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  const maxW = W * 0.6;
+  for (let i = 0; i < N; i++){
+    ctx.save();
+    ctx.rotate(i * SEG + SEG / 2);
+    let fs = W * 0.07, lines;
+    do {
+      ctx.font = `700 ${fs}px Poppins, Quicksand, sans-serif`;
+      lines = wrapLines(SEGMENTS[i].label, maxW);
+      fs -= 0.5;
+    } while (lines.length > 2 && fs > 8);
+    const lh = fs * 1.25;
+    lines.forEach((ln, k) => {
+      ctx.fillText(ln, W * 0.93, (k - (lines.length - 1) / 2) * lh);
+    });
+    ctx.restore();
+  }
+  ctx.restore();
+
+  // Lingkaran hub (di belakang tombol)
+  ctx.beginPath(); ctx.arc(0, 0, size * 0.125, 0, TAU);
+  ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(190,120,150,.35)'; ctx.shadowBlur = 10; ctx.fill();
+  ctx.restore();
+}
+
+function idxAt(a){
+  const x = (((-Math.PI / 2 - a) % TAU) + TAU) % TAU;
+  return Math.floor(x / SEG) % N;
+}
+
+/* ---------- Fisika putar ---------- */
+let lastIdx = idxAt(angle), lastT = 0, rafId = 0;
+const pointerEl = $('pointer');
+
+function flick(){
+  pointerEl.classList.remove('flick'); void pointerEl.offsetWidth; pointerEl.classList.add('flick');
+}
+function checkTick(){
+  const i = idxAt(angle);
+  if (i !== lastIdx){ lastIdx = i; playTick(); flick(); }
+}
+
+function startSpin(v){
+  omega = v;
+  spinning = true;
+  $('spinBtn').disabled = true;
+  $('spinBtn').textContent = '✨';
+  lastT = performance.now();
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(frame);
+}
+function frame(t){
+  const dt = Math.min(0.05, (t - lastT) / 1000); lastT = t;
+  angle += omega * dt;
+  omega *= Math.exp(-0.55 * dt);
+  const sign = Math.sign(omega);
+  omega -= sign * 0.45 * dt;
+  if (Math.sign(omega) !== sign) omega = 0;
+  checkTick();
+  draw();
+  if (Math.abs(omega) < 0.1){ omega = 0; finishSpin(); return; }
+  rafId = requestAnimationFrame(frame);
+}
+
+function finishSpin(){
+  spinning = false;
+  const i = idxAt(angle);
+  spinCount++;
+  $('counter').textContent = 'Putaran ke-' + spinCount;
+  playChime();
+  if (navigator.vibrate) { try { navigator.vibrate([60, 40, 90]); } catch(e){} }
+  burstConfetti();
+  setTimeout(() => showResult(i), 450);
+}
+
+$('spinBtn').addEventListener('click', () => {
+  if (spinning) return;
+  ensureAudio();
+  startSpin(13 + Math.random() * 8);   // putaran acak ±4–6 kali
+});
+
+/* ---------- Swipe / geser roda pakai jari ---------- */
+let dragLast = 0, samples = [], dragTotal = 0;
+function pointerAngle(e){
+  const r = canvas.getBoundingClientRect();
+  return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
+}
+canvas.addEventListener('pointerdown', e => {
+  if (spinning) return;
+  ensureAudio();
+  dragging = true; dragTotal = 0;
+  dragLast = pointerAngle(e);
+  samples = [{ t: performance.now(), a: 0 }];
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  const a = pointerAngle(e);
+  let d = a - dragLast;
+  if (d > Math.PI) d -= TAU;
+  if (d < -Math.PI) d += TAU;
+  dragLast = a;
+  dragTotal += d;
+  angle += d;
+  const now = performance.now();
+  samples.push({ t: now, a: dragTotal });
+  while (samples.length > 2 && now - samples[0].t > 120) samples.shift();
+  checkTick();
+  draw();
+});
+function endDrag(){
+  if (!dragging) return;
+  dragging = false;
+  if (Math.abs(dragTotal) < 0.12) return;           // cuma sentuh, bukan geser
+  const f = samples[0], l = samples[samples.length - 1];
+  let v = (l.t - f.t) > 10 ? (l.a - f.a) / ((l.t - f.t) / 1000) : 0;
+  if (!v) v = dragTotal > 0 ? 1 : -1;
+  const dir = v >= 0 ? 1 : -1;
+  let mag = Math.abs(v);
+  if (mag < 6) mag = 6 + Math.random() * 4;         // geseran pelan tetap diputar
+  mag = Math.min(mag, 26);
+  startSpin(dir * mag);
+}
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+
+/* ---------- Pop-up hasil ---------- */
+let currentResult = null;
+function showResult(i){
+  currentResult = SEGMENTS[i];
+  $('resultText').textContent = currentResult.label;
+  $('resultMsg').textContent = currentResult.msg;
+  $('overlay').classList.add('open');
+}
+function closeResult(){
+  $('overlay').classList.remove('open');
+  $('spinBtn').disabled = false;
+  $('spinBtn').textContent = 'PUTAR!';
+}
+$('againBtn').addEventListener('click', () => { closeResult(); });
+$('waBtn').addEventListener('click', () => {
+  if (!currentResult) return;
+  const num = String(CONFIG.WA_NUMBER).replace(/\D/g, '');
+  const sapa = 'Hai' + (CONFIG.NAMA_COWOK ? ' ' + CONFIG.NAMA_COWOK : '') + '!';
+  const text = `${sapa} Aku udah putar roda takdirnya dan hasilnya: ${currentResult.label}. Jadi jawabannya udah jelas ya! 😊`;
+  const url = `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+  const w = window.open(url, '_blank');
+  if (!w) window.location.href = url;
+});
+
+/* ---------- Konfeti ---------- */
+const cv = $('confetti'), cx = cv.getContext('2d');
+let parts = [], confRaf = 0;
+function sizeConfetti(){
+  const d = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = innerWidth * d; cv.height = innerHeight * d;
+  cx.setTransform(d, 0, 0, d, 0, 0);
+}
+function burstConfetti(){
+  sizeConfetti();
+  const cols = ['#ff8a8a','#ffb3c6','#ffd9a8','#c9b2ff','#ffffff','#ff7a9c','#ffe08a'];
+  const W = innerWidth, H = innerHeight;
+  const origins = [[W * 0.1, H * 0.75, -1], [W * 0.9, H * 0.75, 1], [W * 0.5, H * 0.45, 0]];
+  origins.forEach(([ox, oy, side]) => {
+    for (let k = 0; k < 70; k++){
+      const ang = (side === 0 ? Math.random() * TAU : (-Math.PI / 2 - side * (0.2 + Math.random() * 0.9)));
+      const sp = 7 + Math.random() * 11;
+      parts.push({
+        x: ox, y: oy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+        r: Math.random() * TAU, vr: (Math.random() - .5) * .35,
+        s: 6 + Math.random() * 7, c: cols[Math.floor(Math.random() * cols.length)],
+        heart: Math.random() < 0.22, life: 0, max: 140 + Math.random() * 60
+      });
+    }
+  });
+  cancelAnimationFrame(confRaf);
+  confRaf = requestAnimationFrame(confStep);
+}
+function confStep(){
+  cx.clearRect(0, 0, innerWidth, innerHeight);
+  parts = parts.filter(p => p.life < p.max && p.y < innerHeight + 40);
+  for (const p of parts){
+    p.life++; p.vy += 0.28; p.vx *= 0.992; p.vy *= 0.992;
+    p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    cx.save();
+    cx.globalAlpha = Math.max(0, Math.min(1, (p.max - p.life) / 40));
+    cx.translate(p.x, p.y); cx.rotate(p.r);
+    cx.fillStyle = p.c;
+    if (p.heart){ cx.font = p.s * 2 + 'px sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('❤', 0, 0); }
+    else cx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * 0.6);
+    cx.restore();
+  }
+  if (parts.length) confRaf = requestAnimationFrame(confStep);
+  else cx.clearRect(0, 0, innerWidth, innerHeight);
+}
+
+/* ---------- Transisi intro → utama ---------- */
+const intro = $('introScreen'), main = $('mainScreen');
+$('introTitle').textContent = CONFIG.NAMA_CEWEK ? `Hai, ${CONFIG.NAMA_CEWEK}! 💕` : 'Hai! 💕';
+$('startBtn').addEventListener('click', () => {
+  ensureAudio();
+  playTick();
+  intro.classList.remove('active');
+  intro.classList.add('out');
+  setTimeout(() => {
+    intro.classList.remove('out');
+    main.classList.add('active');
+    muteBtn.classList.add('show');
+    resize();
+  }, 400);
+});
+
+window.addEventListener('resize', () => { resize(); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+resize();
+</script>
+</body>
+</html>
